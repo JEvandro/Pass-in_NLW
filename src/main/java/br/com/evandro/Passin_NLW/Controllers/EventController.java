@@ -26,6 +26,12 @@ public class EventController {
             return ResponseEntity.ok(result);
     }
 
+    @GetMapping("")
+    public ResponseEntity getAllEvents(){
+        var result = eventService.getAllEvents();
+        return ResponseEntity.ok().body(result);
+    }
+
     @PostMapping("")
     public ResponseEntity<EventIdDTO> createEvent(@RequestBody EventRequestDTO body, UriComponentsBuilder uriComponentsBuilder){
         var resultId = this.eventService.eventCreate(body);

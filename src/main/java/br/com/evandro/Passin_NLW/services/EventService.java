@@ -6,6 +6,7 @@ import br.com.evandro.Passin_NLW.domain.event.exceptions.EventFullException;
 import br.com.evandro.Passin_NLW.domain.event.exceptions.EventNotFoundException;
 import br.com.evandro.Passin_NLW.dto.attendee.AttendeeIdDTO;
 import br.com.evandro.Passin_NLW.dto.attendee.AttendeeRequestDTO;
+import br.com.evandro.Passin_NLW.dto.event.AllEventResponseDTO;
 import br.com.evandro.Passin_NLW.dto.event.EventIdDTO;
 import br.com.evandro.Passin_NLW.dto.event.EventRequestDTO;
 import br.com.evandro.Passin_NLW.dto.event.EventResponseDTO;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +49,19 @@ public class EventService {
         this.attendeeService.registerAttendee(newAttendee);
 
         return new AttendeeIdDTO(newAttendee.getId());
+    }
+
+    public List<AllEventResponseDTO> getAllEvents(){
+        List<AllEventResponseDTO> list = new ArrayList<>();
+
+        eventRepository.findAll().forEach( (event) ->{
+            if(event.getMaximumAttendees() <= attendeeService.getAllAttendeesFromEvent(event.getId()).size()) {
+                list.add(new AllEventResponseDTO(event, false));
+            }else{
+                list.add(new AllEventResponseDTO(event, true));
+            }
+        });
+        return list;
     }
 
     private String createSlug(String text){
